@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+=<!DOCTYPE html>
 <html lang="mn">
 <head>
     <meta charset="UTF-8">
@@ -84,7 +84,6 @@
         </div>
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 w-full pb-10">
-            
             <div id="tab-attendance" class="tab-content block">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center col-span-1">
@@ -93,7 +92,6 @@
                             <i data-lucide="map-pin" class="w-4 h-4"></i> Байршил шалгаж байна...
                         </div>
                         <div id="time-display" class="text-3xl font-bold text-gray-800 mb-6 font-mono">00:00:00</div>
-                        
                         <div class="space-y-3">
                             <button id="btn-clock-in" onclick="window.clockIn()" disabled class="w-full bg-green-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed transition">Ажилд Ирсэн (Clock In)</button>
                             <button id="btn-clock-out" onclick="window.clockOut()" disabled class="w-full bg-red-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed transition">Ажлаас Буусан (Clock Out)</button>
@@ -161,12 +159,10 @@
                             <ul id="hr-employee-list" class="divide-y text-sm"></ul>
                         </div>
                     </div>
-
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <h2 class="text-lg font-bold mb-4">Чөлөөний хүсэлтүүд</h2>
                         <div id="hr-leaves-list" class="space-y-3 max-h-80 overflow-y-auto"></div>
                     </div>
-
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 lg:col-span-2">
                         <h2 class="text-lg font-bold mb-4">Ирцийн Тайлан (Бүх ажилчид)</h2>
                         <input type="date" id="hr-report-date" onchange="window.loadAllAttendance()" class="p-2 border rounded-lg text-sm mb-4">
@@ -203,7 +199,6 @@
                     <ul id="admin-locations-list" class="divide-y text-sm"></ul>
                 </div>
             </div>
-
         </main>
     </div>
 
@@ -228,35 +223,21 @@
     </div>
 
     <script type="module">
-        // ЗААВАЛ ДЭЭД ТАЛД БАЙХ ЁСТОЙ IMPORTS (ЭНД Л АЛДАА ГАРСАН БАЙСАН)
+        console.log("🔥 HRMS систем шинээр ачааллаж байна...");
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // ТАНЫ FIREBASE ТОХИРУУЛГА
-        const firebaseConfig = {
-            apiKey: "AIzaSyA2zUAGXfj_rpZiY7C3C-5l7Q-TTqXagDI",
-            authDomain: "timelylite.firebaseapp.com",
-            projectId: "timelylite",
-            storageBucket: "timelylite.firebasestorage.app",
-            messagingSenderId: "134417035584",
-            appId: "1:134417035584:web:34961a6bf60f3f3e044aa5",
-            measurementId: "G-JK0WSVSZBG"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        lucide.createIcons();
-
-        // GLOBAL STATES
+        // Global Variables
+        let auth, db;
         let currentUserData = null;
         let todayDocId = null;
         let currentLocations = [];
+        let todaysRecord = null;
         let isWithinRadius = false;
 
-        // UI Helpers
+        // --- БҮХ ФУНКЦУУДАА ТҮРҮҮЛЖ WINDOW ДЭЭР БҮРТГЭХ (Алдаа гаргахгүй байх 100% хамгаалалт) ---
         window.switchTab = (tabId) => {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -264,29 +245,35 @@
             event.currentTarget.classList.add('active');
         };
 
-        // --- AUTHENTICATION ---
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const docSnap = await getDoc(doc(db, "users", user.uid));
-                if (docSnap.exists()) {
-                    currentUserData = { uid: user.uid, ...docSnap.data() };
-                    initAppUI();
-                }
-            } else {
-                document.getElementById('app-screen').classList.add('hidden');
-                document.getElementById('auth-screen').classList.remove('hidden');
-                document.getElementById('auth-screen').classList.add('flex');
+        window.createSuperAdmin = async () => {
+            const pass = document.getElementById('admin-setup-pass').value.trim();
+            if(!pass || pass.length < 6) return alert("Нууц үг дор хаяж 6 тэмдэгт (үсэг эсвэл тоо) байх ёстой шүү!");
+            if(!auth || !db) return alert("Firebase холбогдож дуусаагүй байна түр хүлээнэ үү!");
+
+            try {
+                const fakeEmail = `99999999@myhrms.mn`;
+                const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
+                await setDoc(doc(db, "users", userCredential.user.uid), {
+                    name: "Ерөнхий Захирал",
+                    phone: "99999999",
+                    role: "ADMIN",
+                    createdAt: serverTimestamp()
+                });
+                alert("Админ амжилттай үүслээ! Одоо та утасны дугаар дээр 99999999 гэж бичээд саяны зохиосон нууц үгээрээ НЭВТРЭХ товчийг дарж орно уу.");
+                document.getElementById('admin-setup-pass').value = ''; 
+            } catch (e) {
+                alert("Алдаа гарлаа (эсвэл аль хэдийн үүссэн байна): " + e.message);
             }
-        });
+        };
 
         window.login = async () => {
+            if(!auth) return alert("Firebase холбогдож дуусаагүй байна түр хүлээнэ үү!");
             const phone = document.getElementById('login-phone').value.trim();
             const pass = document.getElementById('login-password').value.trim();
             if(!phone || !pass) return alert("Мэдээллээ бүрэн оруулна уу!");
 
             document.getElementById('login-text').classList.add('hidden');
             document.getElementById('login-loader').classList.remove('hidden');
-
             const fakeEmail = `${phone}@myhrms.mn`; 
             
             try {
@@ -300,171 +287,15 @@
             }
         };
 
-        window.logout = () => signOut(auth);
-
-        // --- APP INITIALIZATION ---
-        async function initAppUI() {
-            document.getElementById('auth-screen').classList.remove('flex');
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app-screen').classList.remove('hidden');
-            document.getElementById('app-screen').classList.add('flex');
-
-            document.getElementById('user-name-display').innerText = currentUserData.name;
-            document.getElementById('user-role-display').innerText = currentUserData.role;
-
-            if (currentUserData.role === 'HR' || currentUserData.role === 'ADMIN') {
-                document.getElementById('nav-hr').classList.remove('hidden');
-                loadHRData();
-            }
-            if (currentUserData.role === 'ADMIN') {
-                document.getElementById('nav-admin').classList.remove('hidden');
-            }
-
-            setInterval(() => {
-                document.getElementById('time-display').innerText = new Date().toLocaleTimeString('mn-MN', { hour12: false });
-            }, 1000);
-
-            await loadLocations();
-            checkAttendanceStatus();
-            loadMyAttendance();
-            loadMyLeaves();
-            startGPSWatch();
-            lucide.createIcons();
-        }
-
-        // --- GEOLOCATION LOGIC ---
-        async function loadLocations() {
-            const snap = await getDocs(collection(db, "locations"));
-            currentLocations = [];
-            let html = '';
-            snap.forEach(doc => {
-                let d = doc.data();
-                currentLocations.push({ id: doc.id, ...d });
-                html += `<li class="py-2 flex justify-between items-center text-sm border-b">
-                            <span><b>${d.name}</b> <br/><span class="text-xs text-gray-400">Lat: ${d.lat}, Lng: ${d.lng}</span></span> 
-                            ${currentUserData.role === 'ADMIN' ? `<button onclick="window.delLocation('${doc.id}')" class="text-red-500 text-xs px-2 py-1 bg-red-50 rounded">Устгах</button>` : ''}
-                         </li>`;
-            });
-            document.getElementById('admin-locations-list').innerHTML = html || '<p class="text-xs text-gray-500 mt-2">Байршил бүртгээгүй байна.</p>';
-        }
-
-        function startGPSWatch() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.watchPosition(
-                    (position) => {
-                        const myLat = position.coords.latitude;
-                        const myLng = position.coords.longitude;
-                        checkRadius(myLat, myLng);
-                    },
-                    (error) => {
-                        let errMsg = "Байршил тогтооход алдаа гарлаа. Location (GPS) асаана уу.";
-                        if(error.code === 1) errMsg = "GPS ашиглах эрхийг (Permission) зөвшөөрөөгүй байна.";
-                        document.getElementById('location-status').innerHTML = `<span class="text-red-500">${errMsg}</span>`;
-                        disableButtons();
-                    },
-                    { enableHighAccuracy: true }
-                );
-            }
-        }
-
-        function checkRadius(myLat, myLng) {
-            if (currentLocations.length === 0) {
-                document.getElementById('location-status').innerHTML = "Ажлын байрны байршил бүртгэгдээгүй байна.";
-                return;
-            }
-
-            isWithinRadius = false;
-            let closestDist = Infinity;
-
-            for (let loc of currentLocations) {
-                let dist = getDistance(myLat, myLng, loc.lat, loc.lng);
-                if (dist < closestDist) closestDist = dist;
-                if (dist <= 300) { 
-                    isWithinRadius = true;
-                    break;
-                }
-            }
-
-            const statusEl = document.getElementById('location-status');
-            if (isWithinRadius) {
-                statusEl.innerHTML = `<span class="text-green-600 flex items-center justify-center gap-1"><i data-lucide="check-circle" class="w-4 h-4"></i> Ажлын байрны бүсэд байна</span>`;
-                enableButtonsBaseOnState();
-            } else {
-                statusEl.innerHTML = `<span class="text-red-500">Ажлын байрнаас хол байна (${Math.round(closestDist)}м зайтай)</span>`;
-                disableButtons();
-            }
-            lucide.createIcons();
-        }
-
-        function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3; 
-            const φ1 = lat1 * Math.PI/180;
-            const φ2 = lat2 * Math.PI/180;
-            const Δφ = (lat2-lat1) * Math.PI/180;
-            const Δλ = (lon2-lon1) * Math.PI/180;
-            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
-        }
-
-        // --- ATTENDANCE (CLOCK IN/OUT) ---
-        let todaysRecord = null;
-
-        async function checkAttendanceStatus() {
-            const todayStr = new Date().toISOString().split('T')[0];
-            todayDocId = `${currentUserData.uid}_${todayStr}`;
-            
-            onSnapshot(doc(db, "attendance", todayDocId), (docSnap) => {
-                if (docSnap.exists()) {
-                    todaysRecord = docSnap.data();
-                } else {
-                    todaysRecord = null;
-                }
-                enableButtonsBaseOnState();
-            });
-        }
-
-        function disableButtons() {
-            document.getElementById('btn-clock-in').classList.add('opacity-50', 'cursor-not-allowed');
-            document.getElementById('btn-clock-in').disabled = true;
-            document.getElementById('btn-clock-out').classList.add('opacity-50', 'cursor-not-allowed');
-            document.getElementById('btn-clock-out').disabled = true;
-        }
-
-        function enableButtonsBaseOnState() {
-            if(!isWithinRadius) return;
-            
-            const btnIn = document.getElementById('btn-clock-in');
-            const btnOut = document.getElementById('btn-clock-out');
-
-            if (!todaysRecord) {
-                btnIn.classList.remove('opacity-50', 'cursor-not-allowed');
-                btnIn.disabled = false;
-                btnOut.classList.add('opacity-50', 'cursor-not-allowed');
-                btnOut.disabled = true;
-            } else if (todaysRecord && !todaysRecord.clockOut) {
-                btnIn.classList.add('opacity-50', 'cursor-not-allowed');
-                btnIn.disabled = true;
-                btnOut.classList.remove('opacity-50', 'cursor-not-allowed');
-                btnOut.disabled = false;
-            } else {
-                disableButtons();
-                document.getElementById('location-status').innerHTML = `<span class="text-blue-600 font-bold">Өнөөдрийн ирц бүрэн хаагдсан байна.</span>`;
-            }
-        }
+        window.logout = () => { if(auth) signOut(auth); };
 
         window.clockIn = async () => {
             if(!isWithinRadius) return alert("Байршил таарахгүй байна!");
             const todayStr = new Date().toISOString().split('T')[0];
             const nowTime = new Date().toLocaleTimeString('mn-MN', { hour12: false });
-            
             await setDoc(doc(db, "attendance", todayDocId), {
-                uid: currentUserData.uid,
-                name: currentUserData.name,
-                date: todayStr,
-                clockIn: nowTime,
-                clockOut: null,
-                totalHours: 0
+                uid: currentUserData.uid, name: currentUserData.name, date: todayStr,
+                clockIn: nowTime, clockOut: null, totalHours: 0
             });
             alert("Ажилд ирсэн цаг бүртгэгдлээ!");
         };
@@ -472,6 +303,44 @@
         window.clockOut = async () => {
             if(!isWithinRadius) return alert("Байршил таарахгүй байна!");
             const nowTime = new Date().toLocaleTimeString('mn-MN', { hour12: false });
-            
             let inTime = new Date(`1970-01-01T${todaysRecord.clockIn}`);
-            let outTime = new Date(`1970-
+            let outTime = new Date(`1970-01-01T${nowTime}`);
+            let diffHours = (outTime - inTime) / (1000 * 60 * 60);
+            await updateDoc(doc(db, "attendance", todayDocId), { clockOut: nowTime, totalHours: diffHours.toFixed(2) });
+            alert("Ажлаас буусан цаг бүртгэгдлээ!");
+        };
+
+        window.submitLeaveRequest = async () => {
+            const start = document.getElementById('leave-start').value;
+            const end = document.getElementById('leave-end').value;
+            const reason = document.getElementById('leave-reason').value.trim();
+            if(!start || !end || !reason) return alert("Мэдээллээ гүйцэд оруулна уу.");
+
+            await addDoc(collection(db, "leave_requests"), {
+                uid: currentUserData.uid, name: currentUserData.name,
+                startDate: start, endDate: end, reason: reason,
+                status: 'PENDING', createdAt: serverTimestamp()
+            });
+            alert("Хүсэлт амжилттай илгээгдлээ.");
+            document.getElementById('leave-reason').value = '';
+            document.getElementById('leave-start').value = '';
+            document.getElementById('leave-end').value = '';
+        };
+
+        window.actionLeave = async (id, status) => { await updateDoc(doc(db, "leave_requests", id), { status: status }); };
+
+        window.loadAllAttendance = async () => {
+            const dateStr = document.getElementById('hr-report-date').value;
+            const q = query(collection(db, "attendance"), where("date", "==", dateStr));
+            const snap = await getDocs(q);
+            let html = '';
+            snap.forEach(doc => {
+                let r = doc.data();
+                html += `<tr class="border-b border-gray-50">
+                    <td class="py-3 font-semibold text-gray-700">${r.name}</td>
+                    <td class="py-3 text-green-600 font-medium">${r.clockIn || '-'}</td>
+                    <td class="py-3 text-red-500 font-medium">${r.clockOut || '-'}</td>
+                    <td class="py-3 font-mono text-gray-600">${r.totalHours || '0'} ц</td>
+                </tr>`;
+            });
+            document.getElementById('hr-attendance-table').innerHTML = html || '<tr><td colspan="4" class="text-center py-6 text-gray-400">Сонгосон өдөр бүртгэл байхгүй ба
