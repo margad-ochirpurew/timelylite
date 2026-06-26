@@ -34,7 +34,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Нууц үг</label>
                     <input type="password" id="login-password" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 </div>
-                <button onclick="login()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition flex justify-center items-center">
+                <button onclick="window.login()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition flex justify-center items-center">
                     <span id="login-text">Нэвтрэх</span>
                     <span id="login-loader" class="loader ml-2 hidden"></span>
                 </button>
@@ -43,7 +43,13 @@
                 </div>
             </div>
             
-            <button onclick="createSuperAdmin()" class="w-full mt-6 text-xs text-red-400 hover:underline">Анхны систем Админ үүсгэх (Test)</button>
+            <div class="mt-8 border-t border-gray-100 pt-4">
+                <p class="text-[11px] text-gray-400 mb-2 uppercase font-bold tracking-wider text-center">Системийн админ үүсгэх</p>
+                <div class="flex gap-2">
+                    <input type="password" id="admin-setup-pass" placeholder="Админы нууц үг (6+ үсэг/тоо)" class="w-full p-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-red-400">
+                    <button onclick="window.createSuperAdmin()" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-red-100 transition whitespace-nowrap">Үүсгэх</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -60,7 +66,7 @@
                             <div id="user-name-display" class="text-sm font-bold">...</div>
                             <div id="user-role-display" class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full inline-block">...</div>
                         </div>
-                        <button onclick="logout()" class="text-red-500 p-2 hover:bg-red-50 rounded-lg">
+                        <button onclick="window.logout()" class="text-red-500 p-2 hover:bg-red-50 rounded-lg">
                             <i data-lucide="log-out" class="w-5 h-5"></i>
                         </button>
                     </div>
@@ -70,10 +76,10 @@
 
         <div class="bg-white shadow-sm mb-6">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex overflow-x-auto" id="nav-tabs">
-                <button onclick="switchTab('tab-attendance')" class="tab-btn active px-4 py-4 text-sm text-gray-600 whitespace-nowrap">Миний Ирц</button>
-                <button onclick="switchTab('tab-leave')" class="tab-btn px-4 py-4 text-sm text-gray-600 whitespace-nowrap">Чөлөө/Амралт</button>
-                <button id="nav-hr" onclick="switchTab('tab-hr')" class="tab-btn px-4 py-4 text-sm text-gray-600 whitespace-nowrap hidden">HR Самбар</button>
-                <button id="nav-admin" onclick="switchTab('tab-admin')" class="tab-btn px-4 py-4 text-sm text-gray-600 whitespace-nowrap hidden">Админ Самбар</button>
+                <button onclick="window.switchTab('tab-attendance')" class="tab-btn active px-4 py-4 text-sm text-gray-600 whitespace-nowrap">Миний Ирц</button>
+                <button onclick="window.switchTab('tab-leave')" class="tab-btn px-4 py-4 text-sm text-gray-600 whitespace-nowrap">Чөлөө/Амралт</button>
+                <button id="nav-hr" onclick="window.switchTab('tab-hr')" class="tab-btn px-4 py-4 text-sm text-gray-600 whitespace-nowrap hidden">HR Самбар</button>
+                <button id="nav-admin" onclick="window.switchTab('tab-admin')" class="tab-btn px-4 py-4 text-sm text-gray-600 whitespace-nowrap hidden">Админ Самбар</button>
             </div>
         </div>
 
@@ -89,8 +95,8 @@
                         <div id="time-display" class="text-3xl font-bold text-gray-800 mb-6 font-mono">00:00:00</div>
                         
                         <div class="space-y-3">
-                            <button id="btn-clock-in" onclick="clockIn()" disabled class="w-full bg-green-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed transition">Ажилд Ирсэн (Clock In)</button>
-                            <button id="btn-clock-out" onclick="clockOut()" disabled class="w-full bg-red-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed transition">Ажлаас Буусан (Clock Out)</button>
+                            <button id="btn-clock-in" onclick="window.clockIn()" disabled class="w-full bg-green-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed transition">Ажилд Ирсэн (Clock In)</button>
+                            <button id="btn-clock-out" onclick="window.clockOut()" disabled class="w-full bg-red-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed transition">Ажлаас Буусан (Clock Out)</button>
                         </div>
                         <p class="text-xs text-gray-400 mt-4">*Зөвхөн ажлын байрны 300м радиуст байх үед товч идэвхэжнэ.</p>
                     </div>
@@ -134,7 +140,7 @@
                             <label class="block text-xs font-medium text-gray-700 mb-1">Шалтгаан (Чөлөө/Өвчтэй/Ээлжийн амралт)</label>
                             <textarea id="leave-reason" rows="3" class="w-full p-2 border rounded-lg text-sm" placeholder="Шалтгаанаа тодорхой бичнэ үү..."></textarea>
                         </div>
-                        <button onclick="submitLeaveRequest()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 text-sm">Хүсэлт Илгээх</button>
+                        <button onclick="window.submitLeaveRequest()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 text-sm">Хүсэлт Илгээх</button>
                     </div>
 
                     <h2 class="text-lg font-bold mt-10 mb-4 border-t pt-6">Миний хүсэлтүүд</h2>
@@ -149,4 +155,21 @@
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-lg font-bold">Ажилчид</h2>
-                            <button onclick="document.getElementById('modal-add-emp').classList.remove('hidden')" class="text-xs bg-blue-5
+                            <button onclick="document.getElementById('modal-add-emp').classList.remove('hidden')" class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-100">+ Ажилтан нэмэх</button>
+                        </div>
+                        <div class="overflow-y-auto max-h-80">
+                            <ul id="hr-employee-list" class="divide-y text-sm"></ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <h2 class="text-lg font-bold mb-4">Чөлөөний хүсэлтүүд</h2>
+                        <div id="hr-leaves-list" class="space-y-3 max-h-80 overflow-y-auto"></div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 lg:col-span-2">
+                        <h2 class="text-lg font-bold mb-4">Ирцийн Тайлан (Бүх ажилчид)</h2>
+                        <input type="date" id="hr-report-date" onchange="window.loadAllAttendance()" class="p-2 border rounded-lg text-sm mb-4">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 text
+                                
