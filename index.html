@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HRMS - Ирцee Бүртгэл</title>
+    <title>HRMS - Ирц Бүртгэл</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -34,20 +34,17 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Нууц үг</label>
                     <input type="password" id="login-password" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 </div>
-                <button id="btn-login" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition flex justify-center items-center">
-                    <span id="login-text">СИСТЕМД НЭВТРЭХ (V3)</span>
+                <button onclick="appLogin()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition flex justify-center items-center">
+                    <span id="login-text">НЭВТРЭХ (V4)</span>
                     <span id="login-loader" class="loader ml-2 hidden"></span>
                 </button>
-                <div class="text-center mt-4">
-                    <p class="text-xs text-gray-500">Нууц үгээ мартсан бол HR эсвэл Админд хандана уу.</p>
-                </div>
             </div>
             
             <div class="mt-8 border-t border-gray-100 pt-4">
                 <p class="text-[11px] text-gray-400 mb-2 uppercase font-bold tracking-wider text-center">Системийн админ үүсгэх</p>
                 <div class="flex gap-2">
-                    <input type="password" id="admin-setup-pass" placeholder="Админы нууц үг (6+ үсэг)" class="w-full p-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-red-400">
-                    <button id="btn-create-admin" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-red-100 transition whitespace-nowrap">Үүсгэх</button>
+                    <input type="password" id="admin-setup-pass" placeholder="Админы нууц үг (6+ үсэг)" class="w-full p-2 border border-gray-200 rounded-lg text-sm outline-none">
+                    <button onclick="appCreateAdmin()" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-red-100 transition whitespace-nowrap">Үүсгэх (V4)</button>
                 </div>
             </div>
         </div>
@@ -55,31 +52,24 @@
 
     <div id="app-screen" class="hidden flex-1 flex flex-col">
         <nav class="bg-white shadow-sm border-b">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center">
-                        <i data-lucide="briefcase" class="w-6 h-6 text-blue-600 mr-2"></i>
-                        <span class="font-bold text-lg hidden sm:block">Систем</span>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16">
+                <div class="flex items-center"><i data-lucide="briefcase" class="w-6 h-6 text-blue-600 mr-2"></i><span class="font-bold text-lg hidden sm:block">Систем</span></div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <div id="user-name-display" class="text-sm font-bold">...</div>
+                        <div id="user-role-display" class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full inline-block">...</div>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="text-right">
-                            <div id="user-name-display" class="text-sm font-bold">...</div>
-                            <div id="user-role-display" class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full inline-block">...</div>
-                        </div>
-                        <button id="btn-logout" class="text-red-500 p-2 hover:bg-red-50 rounded-lg">
-                            <i data-lucide="log-out" class="w-5 h-5"></i>
-                        </button>
-                    </div>
+                    <button onclick="appLogout()" class="text-red-500 p-2 hover:bg-red-50 rounded-lg"><i data-lucide="log-out" class="w-5 h-5"></i></button>
                 </div>
             </div>
         </nav>
 
         <div class="bg-white shadow-sm mb-6">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex overflow-x-auto" id="nav-tabs">
-                <button onclick="window.switchTab('tab-attendance')" class="tab-btn active px-4 py-4 text-sm text-gray-600 whitespace-nowrap">Миний Ирц</button>
-                <button onclick="window.switchTab('tab-leave')" class="tab-btn px-4 py-4 text-sm text-gray-600 whitespace-nowrap">Чөлөө/Амралт</button>
-                <button id="nav-hr" onclick="window.switchTab('tab-hr')" class="tab-btn px-4 py-4 text-sm text-gray-600 whitespace-nowrap hidden">HR Самбар</button>
-                <button id="nav-admin" onclick="window.switchTab('tab-admin')" class="tab-btn px-4 py-4 text-sm text-gray-600 whitespace-nowrap hidden">Админ Самбар</button>
+                <button onclick="appSwitchTab('tab-attendance', this)" class="tab-btn active px-4 py-4 text-sm text-gray-600 whitespace-nowrap">Миний Ирц</button>
+                <button onclick="appSwitchTab('tab-leave', this)" class="tab-btn px-4 py-4 text-sm text-gray-600 whitespace-nowrap">Чөлөө/Амралт</button>
+                <button id="nav-hr" onclick="appSwitchTab('tab-hr', this)" class="tab-btn px-4 py-4 text-sm text-gray-600 whitespace-nowrap hidden">HR Самбар</button>
+                <button id="nav-admin" onclick="appSwitchTab('tab-admin', this)" class="tab-btn px-4 py-4 text-sm text-gray-600 whitespace-nowrap hidden">Админ Самбар</button>
             </div>
         </div>
 
@@ -88,211 +78,322 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center col-span-1">
                         <h2 class="text-lg font-bold mb-4">Өнөөдрийн Ирц</h2>
-                        <div id="location-status" class="text-xs mb-4 text-gray-500 flex items-center justify-center gap-1">
-                            <i data-lucide="map-pin" class="w-4 h-4"></i> Байршил шалгаж байна...
-                        </div>
+                        <div id="location-status" class="text-xs mb-4 text-gray-500 flex items-center justify-center gap-1">Байршил шалгаж байна...</div>
                         <div id="time-display" class="text-3xl font-bold text-gray-800 mb-6 font-mono">00:00:00</div>
                         <div class="space-y-3">
-                            <button id="btn-clock-in" disabled class="w-full bg-green-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed transition">Ажилд Ирсэн (Clock In)</button>
-                            <button id="btn-clock-out" disabled class="w-full bg-red-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed transition">Ажлаас Буусан (Clock Out)</button>
+                            <button id="btn-clock-in" onclick="appClockIn()" disabled class="w-full bg-green-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed">Ажилд Ирсэн</button>
+                            <button id="btn-clock-out" onclick="appClockOut()" disabled class="w-full bg-red-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed">Ажлаас Буусан</button>
                         </div>
-                        <p class="text-xs text-gray-400 mt-4">*Зөвхөн ажлын байрны 300м радиуст байх үед товч идэвхэжнэ.</p>
                     </div>
-
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 md:col-span-2">
-                        <h2 class="text-lg font-bold mb-4">Сүүлийн 7 хоногийн түүх</h2>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 text-sm">
-                                <thead>
-                                    <tr class="text-left text-gray-500">
-                                        <th class="py-3">Огноо</th>
-                                        <th class="py-3">Ирсэн</th>
-                                        <th class="py-3">Явсан</th>
-                                        <th class="py-3">Ажилласан (цаг)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="my-attendance-list" class="divide-y divide-gray-100">
-                                    <tr><td colspan="4" class="py-4 text-center text-gray-400">Мэдээлэл алга</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <h2 class="text-lg font-bold mb-4">Түүх</h2>
+                        <table class="min-w-full divide-y divide-gray-200 text-sm">
+                            <tbody id="my-attendance-list"><tr><td class="py-4 text-gray-400">Уншиж байна...</td></tr></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
             <div id="tab-leave" class="tab-content hidden">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 max-w-2xl mx-auto">
-                    <h2 class="text-lg font-bold mb-4">Шинэ хүсэлт илгээх</h2>
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-gray-700 mb-1">Эхлэх огноо</label>
-                                <input type="date" id="leave-start" class="w-full p-2 border rounded-lg text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-700 mb-1">Дуусах огноо</label>
-                                <input type="date" id="leave-end" class="w-full p-2 border rounded-lg text-sm">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-gray-700 mb-1">Шалтгаан (Чөлөө/Өвчтэй/Ээлжийн амралт)</label>
-                            <textarea id="leave-reason" rows="3" class="w-full p-2 border rounded-lg text-sm" placeholder="Шалтгаанаа тодорхой бичнэ үү..."></textarea>
-                        </div>
-                        <button id="btn-submit-leave" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 text-sm">Хүсэлт Илгээх</button>
-                    </div>
-
-                    <h2 class="text-lg font-bold mt-10 mb-4 border-t pt-6">Миний хүсэлтүүд</h2>
-                    <div id="my-leaves-list" class="space-y-3">
-                        <div class="text-sm text-gray-500">Хүсэлт байхгүй байна.</div>
-                    </div>
+                    <h2 class="text-lg font-bold mb-4">Шинэ хүсэлт</h2>
+                    <input type="date" id="leave-start" class="w-full p-2 border mb-2 text-sm">
+                    <input type="date" id="leave-end" class="w-full p-2 border mb-2 text-sm">
+                    <textarea id="leave-reason" rows="3" class="w-full p-2 border mb-2 text-sm" placeholder="Шалтгаан..."></textarea>
+                    <button onclick="appSubmitLeave()" class="bg-blue-600 text-white py-2 px-6 rounded text-sm font-bold">Илгээх</button>
+                    
+                    <h2 class="text-lg font-bold mt-8 mb-4 border-t pt-4">Миний хүсэлтүүд</h2>
+                    <div id="my-leaves-list" class="space-y-2 text-sm"></div>
                 </div>
             </div>
 
             <div id="tab-hr" class="tab-content hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-bold">Ажилчид</h2>
-                            <button id="btn-open-emp-modal" class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-100">+ Ажилтан нэмэх</button>
-                        </div>
-                        <div class="overflow-y-auto max-h-80">
-                            <ul id="hr-employee-list" class="divide-y text-sm"></ul>
-                        </div>
+                    <div class="bg-white p-6 rounded border">
+                        <div class="flex justify-between mb-4"><h2 class="font-bold">Ажилчид</h2> <button onclick="document.getElementById('modal-add-emp').classList.remove('hidden')" class="text-blue-600 text-sm">+ Нэмэх</button></div>
+                        <ul id="hr-employee-list" class="divide-y text-sm"></ul>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                        <h2 class="text-lg font-bold mb-4">Чөлөөний хүсэлтүүд</h2>
-                        <div id="hr-leaves-list" class="space-y-3 max-h-80 overflow-y-auto"></div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 lg:col-span-2">
-                        <h2 class="text-lg font-bold mb-4">Ирцийн Тайлан (Бүх ажилчид)</h2>
-                        <input type="date" id="hr-report-date" class="p-2 border rounded-lg text-sm mb-4">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 text-sm">
-                                <thead>
-                                    <tr class="text-left text-gray-500">
-                                        <th class="py-2">Нэр</th>
-                                        <th class="py-2">Ирсэн</th>
-                                        <th class="py-2">Явсан</th>
-                                        <th class="py-2">Цаг</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="hr-attendance-table" class="divide-y divide-gray-100"></tbody>
-                            </table>
-                        </div>
+                    <div class="bg-white p-6 rounded border"><h2 class="font-bold mb-4">Хүсэлтүүд</h2><div id="hr-leaves-list" class="space-y-2 text-sm"></div></div>
+                    <div class="bg-white p-6 rounded border lg:col-span-2">
+                        <h2 class="font-bold mb-4">Ирцийн Тайлан</h2>
+                        <input type="date" id="hr-report-date" onchange="appLoadAllAttendance()" class="border p-2 mb-4 text-sm">
+                        <table class="w-full text-sm"><tbody id="hr-attendance-table" class="divide-y"></tbody></table>
                     </div>
                 </div>
             </div>
 
             <div id="tab-admin" class="tab-content hidden">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 max-w-2xl">
-                    <h2 class="text-lg font-bold mb-2">Ажлын байрны байршил (GPS)</h2>
-                    <p class="text-xs text-gray-500 mb-6">Google Maps дээр өөрийн байршил дээрээ Right-Click хийж Өргөрөг (Latitude), Уртраг (Longitude)-ийг хуулж оруулна уу.</p>
-                    
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-                        <input type="text" id="loc-name" placeholder="Салбарын нэр" class="p-2 border rounded text-sm md:col-span-2">
-                        <input type="number" id="loc-lat" placeholder="Latitude (47.91..)" class="p-2 border rounded text-sm">
-                        <input type="number" id="loc-lng" placeholder="Longitude (106.9..)" class="p-2 border rounded text-sm">
-                    </div>
-                    <button id="btn-add-location" class="bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm hover:bg-blue-700 transition">Байршил Нэмэх</button>
-
-                    <h3 class="font-bold text-sm mt-8 mb-3 border-b pb-2">Бүртгэлтэй байршлууд</h3>
-                    <ul id="admin-locations-list" class="divide-y text-sm"></ul>
+                <div class="bg-white p-6 rounded border max-w-2xl">
+                    <h2 class="font-bold mb-4">Байршил (GPS) нэмэх</h2>
+                    <input type="text" id="loc-name" placeholder="Салбарын нэр" class="border p-2 mb-2 w-full text-sm">
+                    <input type="number" id="loc-lat" placeholder="Latitude (47.9...)" class="border p-2 mb-2 w-full text-sm">
+                    <input type="number" id="loc-lng" placeholder="Longitude (106.9...)" class="border p-2 mb-2 w-full text-sm">
+                    <button onclick="appAddLocation()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold mt-2">Нэмэх</button>
+                    <ul id="admin-locations-list" class="mt-6 divide-y text-sm"></ul>
                 </div>
             </div>
         </main>
     </div>
 
-    <div id="modal-add-emp" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md">
-            <h2 class="text-lg font-bold mb-4">Шинэ ажилтан бүртгэх</h2>
-            <div class="space-y-3">
-                <input type="text" id="new-emp-name" placeholder="Овог Нэр" class="w-full p-2 border rounded-lg text-sm">
-                <input type="number" id="new-emp-phone" placeholder="Утасны дугаар (99112233)" class="w-full p-2 border rounded-lg text-sm">
-                <select id="new-emp-role" class="w-full p-2 border rounded-lg text-sm">
-                    <option value="EMPLOYEE">Энгийн ажилтан</option>
-                    <option value="HR">HR ажилтан</option>
-                </select>
-                <input type="text" id="new-emp-password" placeholder="Анхны нууц үг (6+ үсэг/тоо)" class="w-full p-2 border rounded-lg text-sm">
-                
-                <div class="flex gap-2 mt-4">
-                    <button id="btn-submit-emp" class="flex-1 bg-blue-600 text-white py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition">Бүртгэх</button>
-                    <button id="btn-close-emp-modal" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg font-bold text-sm hover:bg-gray-300 transition">Цуцлах</button>
-                </div>
-            </div>
+    <div id="modal-add-emp" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-xl w-full max-w-sm">
+            <h2 class="font-bold mb-4">Ажилтан бүртгэх</h2>
+            <input type="text" id="new-emp-name" placeholder="Овог Нэр" class="w-full p-2 border mb-2 text-sm">
+            <input type="number" id="new-emp-phone" placeholder="Утас (99112233)" class="w-full p-2 border mb-2 text-sm">
+            <select id="new-emp-role" class="w-full p-2 border mb-2 text-sm"><option value="EMPLOYEE">Ажилтан</option><option value="HR">HR</option></select>
+            <input type="password" id="new-emp-password" placeholder="Нууц үг (6+ тэмдэгт)" class="w-full p-2 border mb-4 text-sm">
+            <button onclick="appAddEmployee()" class="w-full bg-blue-600 text-white py-2 rounded font-bold text-sm mb-2">Бүртгэх</button>
+            <button onclick="document.getElementById('modal-add-emp').classList.add('hidden')" class="w-full bg-gray-200 py-2 rounded font-bold text-sm">Цуцлах</button>
         </div>
     </div>
 
     <script type="module">
+        // 1. ЗААВАЛ ДЭЭД ТАЛД БАЙХ IMPORTS
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // ТАНЫ FIREBASE ТОХИРУУЛГА
+        // 2. FIREBASE ТОХИРУУЛГА
         const firebaseConfig = {
             apiKey: "AIzaSyA2zUAGXfj_rpZiY7C3C-5l7Q-TTqXagDI",
             authDomain: "timelylite.firebaseapp.com",
             projectId: "timelylite",
             storageBucket: "timelylite.firebasestorage.app",
             messagingSenderId: "134417035584",
-            appId: "1:134417035584:web:34961a6bf60f3f3e044aa5",
-            measurementId: "G-JK0WSVSZBG"
+            appId: "1:134417035584:web:34961a6bf60f3f3e044aa5"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        
         lucide.createIcons();
 
+        // 3. ГЛОБАЛ ХУВЬСАГЧУУД
         let currentUserData = null;
         let todayDocId = null;
         let currentLocations = [];
         let isWithinRadius = false;
         let todaysRecord = null;
 
-        // --- ХОЛБООСУУД (EVENT LISTENERS) - ХАМГИЙН НАЙДВАРТАЙ АРГА ---
-        document.getElementById('btn-create-admin').addEventListener('click', async () => {
+        // 4. БҮХ ФУНКЦУУДЫГ WINDOW ДЭЭР БҮРТГЭХ (Алдаа гаргахгүй баттай арга)
+        window.appCreateAdmin = async () => {
             const pass = document.getElementById('admin-setup-pass').value.trim();
             if(!pass || pass.length < 6) return alert("Нууц үг дор хаяж 6 тэмдэгт байх ёстой шүү!");
             try {
-                const fakeEmail = `99999999@myhrms.mn`;
-                const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
-                await setDoc(doc(db, "users", userCredential.user.uid), {
-                    name: "Ерөнхий Захирал", phone: "99999999", role: "ADMIN", createdAt: serverTimestamp()
-                });
-                alert("Админ амжилттай үүслээ! Одоо 99999999 дугаар, саяны нууц үгээрээ нэвтэрч орно уу.");
-                document.getElementById('admin-setup-pass').value = ''; 
-            } catch (e) { alert("Алдаа: " + e.message); }
-        });
+                const userCred = await createUserWithEmailAndPassword(auth, `99999999@myhrms.mn`, pass);
+                await setDoc(doc(db, "users", userCred.user.uid), { name: "Ерөнхий Захирал", phone: "99999999", role: "ADMIN", createdAt: serverTimestamp() });
+                alert("Амжилттай! Одоо 99999999 дугаар, нууц үгээрээ НЭВТРЭХ товчийг дарж орно уу.");
+            } catch(e) { alert("Алдаа гарлаа: " + e.message); }
+        };
 
-        document.getElementById('btn-login').addEventListener('click', async () => {
+        window.appLogin = async () => {
             const phone = document.getElementById('login-phone').value.trim();
             const pass = document.getElementById('login-password').value.trim();
-            if(!phone || !pass) return alert("Мэдээллээ бүрэн оруулна уу!");
+            if(!phone || !pass) return alert("Мэдээллээ гүйцэд оруулна уу!");
             document.getElementById('login-text').classList.add('hidden');
             document.getElementById('login-loader').classList.remove('hidden');
-            try { await signInWithEmailAndPassword(auth, `${phone}@myhrms.mn`, pass); } 
-            catch (error) { alert("Утасны дугаар эсвэл нууц үг буруу."); } 
-            finally {
+            try {
+                await signInWithEmailAndPassword(auth, `${phone}@myhrms.mn`, pass);
+            } catch(e) { 
+                alert("Дугаар эсвэл нууц үг буруу байна!"); 
+            } finally {
                 document.getElementById('login-text').classList.remove('hidden');
                 document.getElementById('login-loader').classList.add('hidden');
             }
-        });
+        };
 
-        document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+        window.appLogout = () => signOut(auth);
 
-        document.getElementById('btn-clock-in').addEventListener('click', async () => {
-            if(!isWithinRadius) return alert("Байршил таарахгүй байна!");
+        window.appSwitchTab = (tabId, btn) => {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.remove('hidden');
+            if(btn) btn.classList.add('active');
+        };
+
+        window.appClockIn = async () => {
+            if(!isWithinRadius) return alert("Ажлын байршлаас хол байна!");
             const todayStr = new Date().toISOString().split('T')[0];
             const nowTime = new Date().toLocaleTimeString('mn-MN', { hour12: false });
-            await setDoc(doc(db, "attendance", todayDocId), {
-                uid: currentUserData.uid, name: currentUserData.name, date: todayStr,
-                clockIn: nowTime, clockOut: null, totalHours: 0
-            });
+            await setDoc(doc(db, "attendance", todayDocId), { uid: currentUserData.uid, name: currentUserData.name, date: todayStr, clockIn: nowTime, clockOut: null, totalHours: 0 });
             alert("Ажилд ирсэн цаг бүртгэгдлээ!");
-        });
+        };
 
-        document.getElementById('btn-clock-out').addEventListener('click', async () => {
-            if(!isWithinRadius) return alert("Байршил таарахгүй байна!");
+        window.appClockOut = async () => {
+            if(!isWithinRadius) return alert("Ажлын байршлаас хол байна!");
             const nowTime = new Date().toLocaleTimeString('mn-MN', { hour12: false });
             let inTime = new Date(`1970-01-01T${todaysRecord.clockIn}`);
-            let outTime = new Date(`1970-01-01T${nowTime
+            let outTime = new Date(`1970-01-01T${nowTime}`);
+            let diffHours = (outTime - inTime) / (1000 * 60 * 60);
+            await updateDoc(doc(db, "attendance", todayDocId), { clockOut: nowTime, totalHours: diffHours.toFixed(2) });
+            alert("Ажлаас буусан цаг бүртгэгдлээ!");
+        };
+
+        window.appSubmitLeave = async () => {
+            const start = document.getElementById('leave-start').value;
+            const end = document.getElementById('leave-end').value;
+            const reason = document.getElementById('leave-reason').value.trim();
+            if(!start || !end || !reason) return alert("Бүх талбарыг бөглөнө үү.");
+            await addDoc(collection(db, "leave_requests"), { uid: currentUserData.uid, name: currentUserData.name, startDate: start, endDate: end, reason: reason, status: 'PENDING', createdAt: serverTimestamp() });
+            alert("Илгээгдлээ.");
+        };
+
+        window.appActionLeave = async (id, status) => { await updateDoc(doc(db, "leave_requests", id), { status: status }); };
+        window.appDelEmp = async (uid) => { if(confirm("Устгах уу?")) await deleteDoc(doc(db, "users", uid)); };
+        window.appDelLocation = async (id) => { if(confirm("Устгах уу?")) { await deleteDoc(doc(db, "locations", id)); fetchLocations(); } };
+
+        window.appAddLocation = async () => {
+            const name = document.getElementById('loc-name').value;
+            const lat = parseFloat(document.getElementById('loc-lat').value);
+            const lng = parseFloat(document.getElementById('loc-lng').value);
+            if(!name || isNaN(lat) || isNaN(lng)) return alert("Зөв мэдээлэл оруулна уу.");
+            await addDoc(collection(db, "locations"), { name: name, lat: lat, lng: lng });
+            alert("Нэмэгдлээ"); fetchLocations();
+        };
+
+        window.appAddEmployee = async () => {
+            const name = document.getElementById('new-emp-name').value;
+            const phone = document.getElementById('new-emp-phone').value;
+            const role = document.getElementById('new-emp-role').value;
+            const pass = document.getElementById('new-emp-password').value;
+            if(!name || !phone || !pass) return alert("Гүйцэд бөглөнө үү!");
+            try {
+                const userCred = await createUserWithEmailAndPassword(auth, `${phone}@myhrms.mn`, pass);
+                await setDoc(doc(db, "users", userCred.user.uid), { name: name, phone: phone, role: role, createdAt: serverTimestamp() });
+                alert("Ажилтан нэмэгдлээ. Систем дахин ачааллана.");
+                window.location.reload();
+            } catch(e) { alert("Алдаа: " + e.message); }
+        };
+
+        // 5. АПП АСААХ БА МЭДЭЭЛЭЛ УНШИХ
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const docSnap = await getDoc(doc(db, "users", user.uid));
+                if (docSnap.exists()) {
+                    currentUserData = { uid: user.uid, ...docSnap.data() };
+                    initAppUI();
+                }
+            } else {
+                document.getElementById('app-screen').classList.add('hidden');
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('auth-screen').classList.add('flex');
+            }
+        });
+
+        async function initAppUI() {
+            document.getElementById('auth-screen').classList.remove('flex');
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            document.getElementById('app-screen').classList.add('flex');
+            
+            document.getElementById('user-name-display').innerText = currentUserData.name;
+            document.getElementById('user-role-display').innerText = currentUserData.role;
+
+            if (currentUserData.role === 'HR' || currentUserData.role === 'ADMIN') { document.getElementById('nav-hr').classList.remove('hidden'); loadHRData(); }
+            if (currentUserData.role === 'ADMIN') { document.getElementById('nav-admin').classList.remove('hidden'); }
+
+            setInterval(() => { document.getElementById('time-display').innerText = new Date().toLocaleTimeString('mn-MN', { hour12: false }); }, 1000);
+            
+            await fetchLocations();
+            checkAttendance();
+            fetchMyData();
+            startGPS();
+        }
+
+        async function fetchLocations() {
+            const snap = await getDocs(collection(db, "locations"));
+            currentLocations = []; let html = '';
+            snap.forEach(doc => {
+                let d = doc.data(); currentLocations.push({ id: doc.id, ...d });
+                html += `<li class="py-2 flex justify-between border-b"><span>${d.name} (${d.lat}, ${d.lng})</span> ${currentUserData.role === 'ADMIN' ? `<button onclick="window.appDelLocation('${doc.id}')" class="text-red-500">Устгах</button>` : ''}</li>`;
+            });
+            document.getElementById('admin-locations-list').innerHTML = html;
+        }
+
+        function startGPS() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.watchPosition(
+                    (pos) => { checkRadius(pos.coords.latitude, pos.coords.longitude); },
+                    (err) => { document.getElementById('location-status').innerHTML = `<span class="text-red-500">GPS алдаа. Location асаана уу.</span>`; disableButtons(); },
+                    { enableHighAccuracy: true }
+                );
+            }
+        }
+
+        function checkRadius(lat, lng) {
+            isWithinRadius = false;
+            for (let loc of currentLocations) {
+                let R = 6371e3; let f1 = lat * Math.PI/180; let f2 = loc.lat * Math.PI/180;
+                let df = (loc.lat-lat) * Math.PI/180; let dl = (loc.lng-lng) * Math.PI/180;
+                let a = Math.sin(df/2) * Math.sin(df/2) + Math.cos(f1) * Math.cos(f2) * Math.sin(dl/2) * Math.sin(dl/2);
+                let dist = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                if (dist <= 300) { isWithinRadius = true; break; }
+            }
+            if(isWithinRadius) {
+                document.getElementById('location-status').innerHTML = `<span class="text-green-600">Ажлын байранд байна</span>`;
+                enableButtonsBaseOnState();
+            } else {
+                document.getElementById('location-status').innerHTML = `<span class="text-red-500">Ажлын байрнаас хол байна</span>`;
+                disableButtons();
+            }
+        }
+
+        function checkAttendance() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            todayDocId = `${currentUserData.uid}_${todayStr}`;
+            onSnapshot(doc(db, "attendance", todayDocId), (docSnap) => {
+                todaysRecord = docSnap.exists() ? docSnap.data() : null;
+                enableButtonsBaseOnState();
+            });
+        }
+
+        function disableButtons() {
+            document.getElementById('btn-clock-in').classList.add('opacity-50', 'cursor-not-allowed'); document.getElementById('btn-clock-in').disabled = true;
+            document.getElementById('btn-clock-out').classList.add('opacity-50', 'cursor-not-allowed'); document.getElementById('btn-clock-out').disabled = true;
+        }
+
+        function enableButtonsBaseOnState() {
+            if(!isWithinRadius) return;
+            const btnIn = document.getElementById('btn-clock-in'); const btnOut = document.getElementById('btn-clock-out');
+            if (!todaysRecord) { btnIn.disabled = false; btnIn.classList.remove('opacity-50', 'cursor-not-allowed'); btnOut.disabled = true; btnOut.classList.add('opacity-50', 'cursor-not-allowed'); } 
+            else if (todaysRecord && !todaysRecord.clockOut) { btnIn.disabled = true; btnIn.classList.add('opacity-50', 'cursor-not-allowed'); btnOut.disabled = false; btnOut.classList.remove('opacity-50', 'cursor-not-allowed'); } 
+            else { disableButtons(); }
+        }
+
+        function fetchMyData() {
+            onSnapshot(query(collection(db, "attendance"), where("uid", "==", currentUserData.uid)), (snap) => {
+                let h = ''; let r = []; snap.forEach(d => r.push(d.data())); r.sort((a,b) => b.date.localeCompare(a.date));
+                r.slice(0,7).forEach(x => { h+=`<tr class="border-b"><td class="py-2">${x.date}</td><td class="text-green-600">${x.clockIn||'-'}</td><td class="text-red-500">${x.clockOut||'-'}</td><td>${x.totalHours||0}ц</td></tr>`; });
+                document.getElementById('my-attendance-list').innerHTML = h;
+            });
+            onSnapshot(query(collection(db, "leave_requests"), where("uid", "==", currentUserData.uid)), (snap) => {
+                let h = ''; snap.forEach(d => { let x = d.data(); h+=`<div class="p-3 bg-gray-50 border rounded mb-2"><b>${x.startDate} - ${x.endDate}</b> (${x.status})<br/>${x.reason}</div>`; });
+                document.getElementById('my-leaves-list').innerHTML = h;
+            });
+        }
+
+        function loadHRData() {
+            onSnapshot(collection(db, "users"), (snap) => {
+                let h = ''; snap.forEach(doc => { let d = doc.data(); h+=`<li class="py-2 flex justify-between border-b"><span>${d.name} (${d.phone})</span>${currentUserData.role==='ADMIN' && d.role!=='ADMIN' ? `<button onclick="window.appDelEmp('${doc.id}')" class="text-red-500">Устгах</button>`:''}</li>`; });
+                document.getElementById('hr-employee-list').innerHTML = h;
+            });
+            onSnapshot(collection(db, "leave_requests"), (snap) => {
+                let h = ''; snap.forEach(docSnap => { let d = docSnap.data(); if(d.status === 'PENDING') { h+=`<div class="p-3 bg-gray-50 border rounded mb-2"><b>${d.name}</b> (${d.startDate} - ${d.endDate})<br/>${d.reason}<br/><button onclick="window.appActionLeave('${docSnap.id}', 'APPROVED')" class="bg-green-500 text-white px-2 mt-1 rounded">Зөвшөөрөх</button> <button onclick="window.appActionLeave('${docSnap.id}', 'REJECTED')" class="bg-red-500 text-white px-2 mt-1 rounded">Татгалзах</button></div>`; } });
+                document.getElementById('hr-leaves-list').innerHTML = h;
+            });
+            document.getElementById('hr-report-date').value = new Date().toISOString().split('T')[0];
+            window.appLoadAllAttendance();
+        }
+
+        window.appLoadAllAttendance = async () => {
+            const dateStr = document.getElementById('hr-report-date').value;
+            const q = query(collection(db, "attendance"), where("date", "==", dateStr));
+            const snap = await getDocs(q); let h = '';
+            snap.forEach(doc => { let r = doc.data(); h+=`<tr class="border-b"><td class="py-2">${r.name}</td><td class="text-green-600">${r.clockIn||'-'}</td><td class="text-red-500">${r.clockOut||'-'}</td><td>${r.totalHours||0}ц</td></tr>`; });
+            document.getElementById('hr-attendance-table').innerHTML = h || '<tr><td colspan="4" class="text-center py-4">Мэдээлэл алга</td></tr>';
+        };
+
+    </script>
+</body>
+</html>
