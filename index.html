@@ -1,4 +1,4 @@
-=<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="mn">
 <head>
     <meta charset="UTF-8">
@@ -34,8 +34,8 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Нууц үг</label>
                     <input type="password" id="login-password" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 </div>
-                <button onclick="window.login()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition flex justify-center items-center">
-                    <span id="login-text">Нэвтрэх</span>
+                <button id="btn-login" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition flex justify-center items-center">
+                    <span id="login-text">СИСТЕМД НЭВТРЭХ (V3)</span>
                     <span id="login-loader" class="loader ml-2 hidden"></span>
                 </button>
                 <div class="text-center mt-4">
@@ -46,8 +46,8 @@
             <div class="mt-8 border-t border-gray-100 pt-4">
                 <p class="text-[11px] text-gray-400 mb-2 uppercase font-bold tracking-wider text-center">Системийн админ үүсгэх</p>
                 <div class="flex gap-2">
-                    <input type="password" id="admin-setup-pass" placeholder="Админы нууц үг (6+ үсэг/тоо)" class="w-full p-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-red-400">
-                    <button onclick="window.createSuperAdmin()" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-red-100 transition whitespace-nowrap">Үүсгэх</button>
+                    <input type="password" id="admin-setup-pass" placeholder="Админы нууц үг (6+ үсэг)" class="w-full p-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-red-400">
+                    <button id="btn-create-admin" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-red-100 transition whitespace-nowrap">Үүсгэх</button>
                 </div>
             </div>
         </div>
@@ -66,7 +66,7 @@
                             <div id="user-name-display" class="text-sm font-bold">...</div>
                             <div id="user-role-display" class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full inline-block">...</div>
                         </div>
-                        <button onclick="window.logout()" class="text-red-500 p-2 hover:bg-red-50 rounded-lg">
+                        <button id="btn-logout" class="text-red-500 p-2 hover:bg-red-50 rounded-lg">
                             <i data-lucide="log-out" class="w-5 h-5"></i>
                         </button>
                     </div>
@@ -93,8 +93,8 @@
                         </div>
                         <div id="time-display" class="text-3xl font-bold text-gray-800 mb-6 font-mono">00:00:00</div>
                         <div class="space-y-3">
-                            <button id="btn-clock-in" onclick="window.clockIn()" disabled class="w-full bg-green-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed transition">Ажилд Ирсэн (Clock In)</button>
-                            <button id="btn-clock-out" onclick="window.clockOut()" disabled class="w-full bg-red-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed transition">Ажлаас Буусан (Clock Out)</button>
+                            <button id="btn-clock-in" disabled class="w-full bg-green-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed transition">Ажилд Ирсэн (Clock In)</button>
+                            <button id="btn-clock-out" disabled class="w-full bg-red-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed transition">Ажлаас Буусан (Clock Out)</button>
                         </div>
                         <p class="text-xs text-gray-400 mt-4">*Зөвхөн ажлын байрны 300м радиуст байх үед товч идэвхэжнэ.</p>
                     </div>
@@ -138,7 +138,7 @@
                             <label class="block text-xs font-medium text-gray-700 mb-1">Шалтгаан (Чөлөө/Өвчтэй/Ээлжийн амралт)</label>
                             <textarea id="leave-reason" rows="3" class="w-full p-2 border rounded-lg text-sm" placeholder="Шалтгаанаа тодорхой бичнэ үү..."></textarea>
                         </div>
-                        <button onclick="window.submitLeaveRequest()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 text-sm">Хүсэлт Илгээх</button>
+                        <button id="btn-submit-leave" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 text-sm">Хүсэлт Илгээх</button>
                     </div>
 
                     <h2 class="text-lg font-bold mt-10 mb-4 border-t pt-6">Миний хүсэлтүүд</h2>
@@ -153,7 +153,7 @@
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-lg font-bold">Ажилчид</h2>
-                            <button onclick="document.getElementById('modal-add-emp').classList.remove('hidden')" class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-100">+ Ажилтан нэмэх</button>
+                            <button id="btn-open-emp-modal" class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-100">+ Ажилтан нэмэх</button>
                         </div>
                         <div class="overflow-y-auto max-h-80">
                             <ul id="hr-employee-list" class="divide-y text-sm"></ul>
@@ -165,7 +165,7 @@
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 lg:col-span-2">
                         <h2 class="text-lg font-bold mb-4">Ирцийн Тайлан (Бүх ажилчид)</h2>
-                        <input type="date" id="hr-report-date" onchange="window.loadAllAttendance()" class="p-2 border rounded-lg text-sm mb-4">
+                        <input type="date" id="hr-report-date" class="p-2 border rounded-lg text-sm mb-4">
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 text-sm">
                                 <thead>
@@ -193,7 +193,7 @@
                         <input type="number" id="loc-lat" placeholder="Latitude (47.91..)" class="p-2 border rounded text-sm">
                         <input type="number" id="loc-lng" placeholder="Longitude (106.9..)" class="p-2 border rounded text-sm">
                     </div>
-                    <button onclick="window.addLocation()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm hover:bg-blue-700 transition">Байршил Нэмэх</button>
+                    <button id="btn-add-location" class="bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm hover:bg-blue-700 transition">Байршил Нэмэх</button>
 
                     <h3 class="font-bold text-sm mt-8 mb-3 border-b pb-2">Бүртгэлтэй байршлууд</h3>
                     <ul id="admin-locations-list" class="divide-y text-sm"></ul>
@@ -215,81 +215,72 @@
                 <input type="text" id="new-emp-password" placeholder="Анхны нууц үг (6+ үсэг/тоо)" class="w-full p-2 border rounded-lg text-sm">
                 
                 <div class="flex gap-2 mt-4">
-                    <button onclick="window.addEmployee()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition">Бүртгэх</button>
-                    <button onclick="document.getElementById('modal-add-emp').classList.add('hidden')" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg font-bold text-sm hover:bg-gray-300 transition">Цуцлах</button>
+                    <button id="btn-submit-emp" class="flex-1 bg-blue-600 text-white py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition">Бүртгэх</button>
+                    <button id="btn-close-emp-modal" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg font-bold text-sm hover:bg-gray-300 transition">Цуцлах</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script type="module">
-        console.log("🔥 HRMS систем шинээр ачааллаж байна...");
-
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // Global Variables
-        let auth, db;
+        // ТАНЫ FIREBASE ТОХИРУУЛГА
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2zUAGXfj_rpZiY7C3C-5l7Q-TTqXagDI",
+            authDomain: "timelylite.firebaseapp.com",
+            projectId: "timelylite",
+            storageBucket: "timelylite.firebasestorage.app",
+            messagingSenderId: "134417035584",
+            appId: "1:134417035584:web:34961a6bf60f3f3e044aa5",
+            measurementId: "G-JK0WSVSZBG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        lucide.createIcons();
+
         let currentUserData = null;
         let todayDocId = null;
         let currentLocations = [];
-        let todaysRecord = null;
         let isWithinRadius = false;
+        let todaysRecord = null;
 
-        // --- БҮХ ФУНКЦУУДАА ТҮРҮҮЛЖ WINDOW ДЭЭР БҮРТГЭХ (Алдаа гаргахгүй байх 100% хамгаалалт) ---
-        window.switchTab = (tabId) => {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.remove('hidden');
-            event.currentTarget.classList.add('active');
-        };
-
-        window.createSuperAdmin = async () => {
+        // --- ХОЛБООСУУД (EVENT LISTENERS) - ХАМГИЙН НАЙДВАРТАЙ АРГА ---
+        document.getElementById('btn-create-admin').addEventListener('click', async () => {
             const pass = document.getElementById('admin-setup-pass').value.trim();
-            if(!pass || pass.length < 6) return alert("Нууц үг дор хаяж 6 тэмдэгт (үсэг эсвэл тоо) байх ёстой шүү!");
-            if(!auth || !db) return alert("Firebase холбогдож дуусаагүй байна түр хүлээнэ үү!");
-
+            if(!pass || pass.length < 6) return alert("Нууц үг дор хаяж 6 тэмдэгт байх ёстой шүү!");
             try {
                 const fakeEmail = `99999999@myhrms.mn`;
                 const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
                 await setDoc(doc(db, "users", userCredential.user.uid), {
-                    name: "Ерөнхий Захирал",
-                    phone: "99999999",
-                    role: "ADMIN",
-                    createdAt: serverTimestamp()
+                    name: "Ерөнхий Захирал", phone: "99999999", role: "ADMIN", createdAt: serverTimestamp()
                 });
-                alert("Админ амжилттай үүслээ! Одоо та утасны дугаар дээр 99999999 гэж бичээд саяны зохиосон нууц үгээрээ НЭВТРЭХ товчийг дарж орно уу.");
+                alert("Админ амжилттай үүслээ! Одоо 99999999 дугаар, саяны нууц үгээрээ нэвтэрч орно уу.");
                 document.getElementById('admin-setup-pass').value = ''; 
-            } catch (e) {
-                alert("Алдаа гарлаа (эсвэл аль хэдийн үүссэн байна): " + e.message);
-            }
-        };
+            } catch (e) { alert("Алдаа: " + e.message); }
+        });
 
-        window.login = async () => {
-            if(!auth) return alert("Firebase холбогдож дуусаагүй байна түр хүлээнэ үү!");
+        document.getElementById('btn-login').addEventListener('click', async () => {
             const phone = document.getElementById('login-phone').value.trim();
             const pass = document.getElementById('login-password').value.trim();
             if(!phone || !pass) return alert("Мэдээллээ бүрэн оруулна уу!");
-
             document.getElementById('login-text').classList.add('hidden');
             document.getElementById('login-loader').classList.remove('hidden');
-            const fakeEmail = `${phone}@myhrms.mn`; 
-            
-            try {
-                await signInWithEmailAndPassword(auth, fakeEmail, pass);
-            } catch (error) {
-                alert("Нэвтрэх үед алдаа гарлаа: Утасны дугаар эсвэл нууц үг буруу.");
-                console.error(error);
-            } finally {
+            try { await signInWithEmailAndPassword(auth, `${phone}@myhrms.mn`, pass); } 
+            catch (error) { alert("Утасны дугаар эсвэл нууц үг буруу."); } 
+            finally {
                 document.getElementById('login-text').classList.remove('hidden');
                 document.getElementById('login-loader').classList.add('hidden');
             }
-        };
+        });
 
-        window.logout = () => { if(auth) signOut(auth); };
+        document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
-        window.clockIn = async () => {
+        document.getElementById('btn-clock-in').addEventListener('click', async () => {
             if(!isWithinRadius) return alert("Байршил таарахгүй байна!");
             const todayStr = new Date().toISOString().split('T')[0];
             const nowTime = new Date().toLocaleTimeString('mn-MN', { hour12: false });
@@ -298,49 +289,10 @@
                 clockIn: nowTime, clockOut: null, totalHours: 0
             });
             alert("Ажилд ирсэн цаг бүртгэгдлээ!");
-        };
+        });
 
-        window.clockOut = async () => {
+        document.getElementById('btn-clock-out').addEventListener('click', async () => {
             if(!isWithinRadius) return alert("Байршил таарахгүй байна!");
             const nowTime = new Date().toLocaleTimeString('mn-MN', { hour12: false });
             let inTime = new Date(`1970-01-01T${todaysRecord.clockIn}`);
-            let outTime = new Date(`1970-01-01T${nowTime}`);
-            let diffHours = (outTime - inTime) / (1000 * 60 * 60);
-            await updateDoc(doc(db, "attendance", todayDocId), { clockOut: nowTime, totalHours: diffHours.toFixed(2) });
-            alert("Ажлаас буусан цаг бүртгэгдлээ!");
-        };
-
-        window.submitLeaveRequest = async () => {
-            const start = document.getElementById('leave-start').value;
-            const end = document.getElementById('leave-end').value;
-            const reason = document.getElementById('leave-reason').value.trim();
-            if(!start || !end || !reason) return alert("Мэдээллээ гүйцэд оруулна уу.");
-
-            await addDoc(collection(db, "leave_requests"), {
-                uid: currentUserData.uid, name: currentUserData.name,
-                startDate: start, endDate: end, reason: reason,
-                status: 'PENDING', createdAt: serverTimestamp()
-            });
-            alert("Хүсэлт амжилттай илгээгдлээ.");
-            document.getElementById('leave-reason').value = '';
-            document.getElementById('leave-start').value = '';
-            document.getElementById('leave-end').value = '';
-        };
-
-        window.actionLeave = async (id, status) => { await updateDoc(doc(db, "leave_requests", id), { status: status }); };
-
-        window.loadAllAttendance = async () => {
-            const dateStr = document.getElementById('hr-report-date').value;
-            const q = query(collection(db, "attendance"), where("date", "==", dateStr));
-            const snap = await getDocs(q);
-            let html = '';
-            snap.forEach(doc => {
-                let r = doc.data();
-                html += `<tr class="border-b border-gray-50">
-                    <td class="py-3 font-semibold text-gray-700">${r.name}</td>
-                    <td class="py-3 text-green-600 font-medium">${r.clockIn || '-'}</td>
-                    <td class="py-3 text-red-500 font-medium">${r.clockOut || '-'}</td>
-                    <td class="py-3 font-mono text-gray-600">${r.totalHours || '0'} ц</td>
-                </tr>`;
-            });
-            document.getElementById('hr-attendance-table').innerHTML = html || '<tr><td colspan="4" class="text-center py-6 text-gray-400">Сонгосон өдөр бүртгэл байхгүй ба
+            let outTime = new Date(`1970-01-01T${nowTime
