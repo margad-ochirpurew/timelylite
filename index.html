@@ -171,5 +171,307 @@
                         <h2 class="text-lg font-bold mb-4">Ирцийн Тайлан (Бүх ажилчид)</h2>
                         <input type="date" id="hr-report-date" onchange="window.loadAllAttendance()" class="p-2 border rounded-lg text-sm mb-4">
                         <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 text
-                                
+                            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                <thead>
+                                    <tr class="text-left text-gray-500">
+                                        <th class="py-2">Нэр</th>
+                                        <th class="py-2">Ирсэн</th>
+                                        <th class="py-2">Явсан</th>
+                                        <th class="py-2">Цаг</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hr-attendance-table" class="divide-y divide-gray-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-admin" class="tab-content hidden">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 max-w-2xl">
+                    <h2 class="text-lg font-bold mb-2">Ажлын байрны байршил (GPS)</h2>
+                    <p class="text-xs text-gray-500 mb-6">Google Maps дээр өөрийн байршил дээрээ Right-Click хийж Өргөрөг (Latitude), Уртраг (Longitude)-ийг хуулж оруулна уу.</p>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+                        <input type="text" id="loc-name" placeholder="Салбарын нэр" class="p-2 border rounded text-sm md:col-span-2">
+                        <input type="number" id="loc-lat" placeholder="Latitude (47.91..)" class="p-2 border rounded text-sm">
+                        <input type="number" id="loc-lng" placeholder="Longitude (106.9..)" class="p-2 border rounded text-sm">
+                    </div>
+                    <button onclick="window.addLocation()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm hover:bg-blue-700 transition">Байршил Нэмэх</button>
+
+                    <h3 class="font-bold text-sm mt-8 mb-3 border-b pb-2">Бүртгэлтэй байршлууд</h3>
+                    <ul id="admin-locations-list" class="divide-y text-sm"></ul>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="modal-add-emp" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md">
+            <h2 class="text-lg font-bold mb-4">Шинэ ажилтан бүртгэх</h2>
+            <div class="space-y-3">
+                <input type="text" id="new-emp-name" placeholder="Овог Нэр" class="w-full p-2 border rounded-lg text-sm">
+                <input type="number" id="new-emp-phone" placeholder="Утасны дугаар (99112233)" class="w-full p-2 border rounded-lg text-sm">
+                <select id="new-emp-role" class="w-full p-2 border rounded-lg text-sm">
+                    <option value="EMPLOYEE">Энгийн ажилтан</option>
+                    <option value="HR">HR ажилтан</option>
+                </select>
+                <input type="text" id="new-emp-password" placeholder="Анхны нууц үг (6+ үсэг/тоо)" class="w-full p-2 border rounded-lg text-sm">
+                
+                <div class="flex gap-2 mt-4">
+                    <button onclick="window.addEmployee()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition">Бүртгэх</button>
+                    <button onclick="document.getElementById('modal-add-emp').classList.add('hidden')" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg font-bold text-sm hover:bg-gray-300 transition">Цуцлах</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ЗААВАЛ ДЭЭД ТАЛД БАЙХ ЁСТОЙ IMPORTS (ЭНД Л АЛДАА ГАРСАН БАЙСАН)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // ТАНЫ FIREBASE ТОХИРУУЛГА
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2zUAGXfj_rpZiY7C3C-5l7Q-TTqXagDI",
+            authDomain: "timelylite.firebaseapp.com",
+            projectId: "timelylite",
+            storageBucket: "timelylite.firebasestorage.app",
+            messagingSenderId: "134417035584",
+            appId: "1:134417035584:web:34961a6bf60f3f3e044aa5",
+            measurementId: "G-JK0WSVSZBG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        lucide.createIcons();
+
+        // GLOBAL STATES
+        let currentUserData = null;
+        let todayDocId = null;
+        let currentLocations = [];
+        let isWithinRadius = false;
+
+        // UI Helpers
+        window.switchTab = (tabId) => {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.remove('hidden');
+            event.currentTarget.classList.add('active');
+        };
+
+        // --- AUTHENTICATION ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const docSnap = await getDoc(doc(db, "users", user.uid));
+                if (docSnap.exists()) {
+                    currentUserData = { uid: user.uid, ...docSnap.data() };
+                    initAppUI();
+                }
+            } else {
+                document.getElementById('app-screen').classList.add('hidden');
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('auth-screen').classList.add('flex');
+            }
+        });
+
+        window.login = async () => {
+            const phone = document.getElementById('login-phone').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+            if(!phone || !pass) return alert("Мэдээллээ бүрэн оруулна уу!");
+
+            document.getElementById('login-text').classList.add('hidden');
+            document.getElementById('login-loader').classList.remove('hidden');
+
+            const fakeEmail = `${phone}@myhrms.mn`; 
+            
+            try {
+                await signInWithEmailAndPassword(auth, fakeEmail, pass);
+            } catch (error) {
+                alert("Нэвтрэх үед алдаа гарлаа: Утасны дугаар эсвэл нууц үг буруу.");
+                console.error(error);
+            } finally {
+                document.getElementById('login-text').classList.remove('hidden');
+                document.getElementById('login-loader').classList.add('hidden');
+            }
+        };
+
+        window.logout = () => signOut(auth);
+
+        // --- APP INITIALIZATION ---
+        async function initAppUI() {
+            document.getElementById('auth-screen').classList.remove('flex');
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            document.getElementById('app-screen').classList.add('flex');
+
+            document.getElementById('user-name-display').innerText = currentUserData.name;
+            document.getElementById('user-role-display').innerText = currentUserData.role;
+
+            if (currentUserData.role === 'HR' || currentUserData.role === 'ADMIN') {
+                document.getElementById('nav-hr').classList.remove('hidden');
+                loadHRData();
+            }
+            if (currentUserData.role === 'ADMIN') {
+                document.getElementById('nav-admin').classList.remove('hidden');
+            }
+
+            setInterval(() => {
+                document.getElementById('time-display').innerText = new Date().toLocaleTimeString('mn-MN', { hour12: false });
+            }, 1000);
+
+            await loadLocations();
+            checkAttendanceStatus();
+            loadMyAttendance();
+            loadMyLeaves();
+            startGPSWatch();
+            lucide.createIcons();
+        }
+
+        // --- GEOLOCATION LOGIC ---
+        async function loadLocations() {
+            const snap = await getDocs(collection(db, "locations"));
+            currentLocations = [];
+            let html = '';
+            snap.forEach(doc => {
+                let d = doc.data();
+                currentLocations.push({ id: doc.id, ...d });
+                html += `<li class="py-2 flex justify-between items-center text-sm border-b">
+                            <span><b>${d.name}</b> <br/><span class="text-xs text-gray-400">Lat: ${d.lat}, Lng: ${d.lng}</span></span> 
+                            ${currentUserData.role === 'ADMIN' ? `<button onclick="window.delLocation('${doc.id}')" class="text-red-500 text-xs px-2 py-1 bg-red-50 rounded">Устгах</button>` : ''}
+                         </li>`;
+            });
+            document.getElementById('admin-locations-list').innerHTML = html || '<p class="text-xs text-gray-500 mt-2">Байршил бүртгээгүй байна.</p>';
+        }
+
+        function startGPSWatch() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.watchPosition(
+                    (position) => {
+                        const myLat = position.coords.latitude;
+                        const myLng = position.coords.longitude;
+                        checkRadius(myLat, myLng);
+                    },
+                    (error) => {
+                        let errMsg = "Байршил тогтооход алдаа гарлаа. Location (GPS) асаана уу.";
+                        if(error.code === 1) errMsg = "GPS ашиглах эрхийг (Permission) зөвшөөрөөгүй байна.";
+                        document.getElementById('location-status').innerHTML = `<span class="text-red-500">${errMsg}</span>`;
+                        disableButtons();
+                    },
+                    { enableHighAccuracy: true }
+                );
+            }
+        }
+
+        function checkRadius(myLat, myLng) {
+            if (currentLocations.length === 0) {
+                document.getElementById('location-status').innerHTML = "Ажлын байрны байршил бүртгэгдээгүй байна.";
+                return;
+            }
+
+            isWithinRadius = false;
+            let closestDist = Infinity;
+
+            for (let loc of currentLocations) {
+                let dist = getDistance(myLat, myLng, loc.lat, loc.lng);
+                if (dist < closestDist) closestDist = dist;
+                if (dist <= 300) { 
+                    isWithinRadius = true;
+                    break;
+                }
+            }
+
+            const statusEl = document.getElementById('location-status');
+            if (isWithinRadius) {
+                statusEl.innerHTML = `<span class="text-green-600 flex items-center justify-center gap-1"><i data-lucide="check-circle" class="w-4 h-4"></i> Ажлын байрны бүсэд байна</span>`;
+                enableButtonsBaseOnState();
+            } else {
+                statusEl.innerHTML = `<span class="text-red-500">Ажлын байрнаас хол байна (${Math.round(closestDist)}м зайтай)</span>`;
+                disableButtons();
+            }
+            lucide.createIcons();
+        }
+
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; 
+            const φ1 = lat1 * Math.PI/180;
+            const φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2-lat1) * Math.PI/180;
+            const Δλ = (lon2-lon1) * Math.PI/180;
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // --- ATTENDANCE (CLOCK IN/OUT) ---
+        let todaysRecord = null;
+
+        async function checkAttendanceStatus() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            todayDocId = `${currentUserData.uid}_${todayStr}`;
+            
+            onSnapshot(doc(db, "attendance", todayDocId), (docSnap) => {
+                if (docSnap.exists()) {
+                    todaysRecord = docSnap.data();
+                } else {
+                    todaysRecord = null;
+                }
+                enableButtonsBaseOnState();
+            });
+        }
+
+        function disableButtons() {
+            document.getElementById('btn-clock-in').classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('btn-clock-in').disabled = true;
+            document.getElementById('btn-clock-out').classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('btn-clock-out').disabled = true;
+        }
+
+        function enableButtonsBaseOnState() {
+            if(!isWithinRadius) return;
+            
+            const btnIn = document.getElementById('btn-clock-in');
+            const btnOut = document.getElementById('btn-clock-out');
+
+            if (!todaysRecord) {
+                btnIn.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnIn.disabled = false;
+                btnOut.classList.add('opacity-50', 'cursor-not-allowed');
+                btnOut.disabled = true;
+            } else if (todaysRecord && !todaysRecord.clockOut) {
+                btnIn.classList.add('opacity-50', 'cursor-not-allowed');
+                btnIn.disabled = true;
+                btnOut.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnOut.disabled = false;
+            } else {
+                disableButtons();
+                document.getElementById('location-status').innerHTML = `<span class="text-blue-600 font-bold">Өнөөдрийн ирц бүрэн хаагдсан байна.</span>`;
+            }
+        }
+
+        window.clockIn = async () => {
+            if(!isWithinRadius) return alert("Байршил таарахгүй байна!");
+            const todayStr = new Date().toISOString().split('T')[0];
+            const nowTime = new Date().toLocaleTimeString('mn-MN', { hour12: false });
+            
+            await setDoc(doc(db, "attendance", todayDocId), {
+                uid: currentUserData.uid,
+                name: currentUserData.name,
+                date: todayStr,
+                clockIn: nowTime,
+                clockOut: null,
+                totalHours: 0
+            });
+            alert("Ажилд ирсэн цаг бүртгэгдлээ!");
+        };
+
+        window.clockOut = async () => {
+            if(!isWithinRadius) return alert("Байршил таарахгүй байна!");
+            const nowTime = new Date().toLocaleTimeString('mn-MN', { hour12: false });
+            
+            let inTime = new Date(`1970-01-01T${todaysRecord.clockIn}`);
+            let outTime = new Date(`1970-
